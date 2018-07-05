@@ -4,6 +4,6 @@ node{
 	}
 	stage('Build'){
 	checkout scm
-	sh 'Make'
+	sh 'make'
 	}
 }

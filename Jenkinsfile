@@ -4,6 +4,7 @@ node{
 	}
 	stage('Unit Tests'){
 	//unit tests placeholder
+	sh './unittests.sh'
 	}
 	stage('Build'){
 	checkout scm

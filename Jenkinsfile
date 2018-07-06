@@ -7,7 +7,7 @@ node{
 	}
 	stage('Build'){
 	checkout scm
-	sh 'make V=s'
+	sh 'sudo make V=s'
 	}
 	stage('Deploy'){
 	//placeholder for deploy

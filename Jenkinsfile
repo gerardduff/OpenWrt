@@ -9,4 +9,7 @@ node{
 	checkout scm
 	sh 'make FORCE=1'
 	}
+	stage('Deploy'){
+	//placeholder for deploy
+	}
 }

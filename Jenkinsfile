@@ -7,7 +7,7 @@ node{
 	}
 	stage('Build'){
 	checkout scm
-	sh 'make FORCE=1'
+	sh 'make'
 	}
 	stage('Deploy'){
 	//placeholder for deploy

@@ -6,9 +6,12 @@ node{
 	//unit tests placeholder
 	sh './unittests.sh'
 	}
-	stage('Build'){
+	stage('Make'){
 	checkout scm
 	sh 'sudo make V=s'
+	}
+	stage('Build binary'){
+	sh './buildBinary.sh'
 	}
 	stage('Deploy'){
 	//placeholder for deploy

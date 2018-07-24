@@ -6,6 +6,10 @@ node{
 	//unit tests placeholder
 	sh './unittests.sh'
 	}
+	stage('Update release info in files')
+	{
+	//
+	}
 	stage('Make'){
 	checkout scm
 	sh 'sudo make V=s'

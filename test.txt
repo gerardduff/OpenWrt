@@ -4,4 +4,4 @@ lots of changes
 
 release 2
 
-#define VERSION "1.4.11"
+#define VERSION "1.4.12"

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+FILE_TO_READ=$1
+echo "file to read is $FILE_TO_READ"
+
+#get version info from file
+CURRENT_VERSION_INFO=$(cat $FILE_TO_READ | grep "#define VERSION " | sed -nre 's/^[^0-9]*(([0-9]+\.)*[0-9]+).*/\1/p' )
+echo "version info from file is $CURRENT_VERSION_INFO "
+b=(${CURRENT_VERSION_INFO//[!0-9]/ } )
+
+#compare version numbers and update first two parts if needed, else just increment last part
+if [ ${a[0]} -ne ${b[0]} ] || [ ${a[1]} -ne ${b[1]} ]
+then
+	echo "release versions different, first version of file in new release, resetting patch number to 0"
+	b[0]=${a[0]}
+	b[1]=${a[1]}
+	b[2]=0
+else
+	echo "release versions equal, incrementing patch number"
+	((b[2]++))
+fi
+NEW_REVISION="${b[0]}.${b[1]}.${b[2]}"
+echo "new revsion is $NEW_REVISION "
+
+#replace version info in file
+sed -ie "s/define VERSION \"$CURRENT_VERSION_INFO\"/define VERSION \"$NEW_REVISION\"/g" $FILE_TO_EDIT
+cat $FILE_TO_EDIT

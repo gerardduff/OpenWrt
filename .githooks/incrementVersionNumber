@@ -1,0 +1,46 @@
+#!/bin/bash
+
+FILE_TO_EDIT=$1
+echo "file to edit is $FILE_TO_EDIT"
+
+GIT_RELEASE_INFO=$2
+echo "git release info is $GIT_RELEASE_INFO"
+
+#latest version of file in GIT
+VERSION_OF_FILE_IN_GIT=(${GIT_RELEASE_INFO//[!0-9]/ } )
+
+#get current branch
+CURRENT_BRANCH=$(git branch | grep \* | cut -d ' ' -f2-)
+echo "current branch is $CURRENT_BRANCH "
+
+#get newest release in git from tag info
+NEWEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+echo "newest tag is $NEWEST_TAG "
+LATEST_RELEASE_IN_GIT=(${NEWEST_TAG//[!0-9]/ } )
+
+#get version info from file to push
+VERSION_INFO_LINE=$(cat $FILE_TO_EDIT | grep "#define VERSION " | sed -nre 's/^[^0-9]*(([0-9]+\.)*[0-9]+).*/\1/p' )
+echo "version info from file is $VERSION_INFO_LINE "
+VERSION_OF_NEW_FILE=(${VERSION_INFO_LINE//[!0-9]/ } )
+
+#compare version numbers and update first two parts if needed, else just increment last part
+VERSION_OF_NEW_FILE[0]=${LATEST_RELEASE_IN_GIT[0]}
+VERSION_OF_NEW_FILE[1]=${LATEST_RELEASE_IN_GIT[1]}
+if [ ${LATEST_RELEASE_IN_GIT[0]} -eq ${VERSION_OF_FILE_IN_GIT[0]} ] && [ ${LATEST_RELEASE_IN_GIT[1]} -eq ${VERSION_OF_FILE_IN_GIT[1]} ]
+then
+	if [ ${VERSION_OF_FILE_IN_GIT[2]} -gt ${VERSION_OF_NEW_FILE[2]} ]
+	then
+		((VERSION_OF_FILE_IN_GIT[2]++))
+		VERSION_OF_NEW_FILE[2]=${VERSION_OF_FILE_IN_GIT[2]}
+	else
+		((VERSION_OF_NEW_FILE[2]++))
+	fi
+else
+	VERSION_OF_NEW_FILE[2]=0;
+fi
+NEW_REVISION="${VERSION_OF_NEW_FILE[0]}.${VERSION_OF_NEW_FILE[1]}.${VERSION_OF_NEW_FILE[2]}"
+echo "new revsion is $NEW_REVISION "
+
+#replace version info in file
+sed -ie "s/define VERSION \"$VERSION_INFO_LINE\"/define VERSION \"$NEW_REVISION\"/g" $FILE_TO_EDIT
+cat $FILE_TO_EDIT

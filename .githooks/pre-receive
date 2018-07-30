@@ -1,0 +1,17 @@
+#!/bin/bash
+oldrev=$1
+newrev=$2
+refname=$3
+
+GetFileVersion(){
+	CURRENT_FILE_VERSION_IN_GIT=$($1 | grep "#define VERSION " | sed -nre 's/^[^0-9]*(([0-9]+\.)*[0-9]+).*/\1/p')
+	return 0
+}
+
+while read oldrev newrev refname; do
+	git diff --name-only $oldrev $newrev |
+	while read file; do
+		git show $oldrev:$file | GetFileVersion /dev/stdin
+		git show $newrev:$file | incrementVersionNumber /dev/stdin $CURRENT_FILE_VERSION_IN_GIT || exit 1
+	done
+done

@@ -1,5 +1,7 @@
 #!/bin/bash
+echo "pre-receive"
 set -x
+echo "before vars"
 oldrev=$1
 newrev=$2
 refname=$3

@@ -2,16 +2,21 @@
 oldrev=$1
 newrev=$2
 refname=$3
-echo "running script" >>hooks.log
+echo "running script" 
 GetFileVersion(){
 	CURRENT_FILE_VERSION_IN_GIT=$($1 | grep "#define VERSION " | sed -nre 's/^[^0-9]*(([0-9]+\.)*[0-9]+).*/\1/p')
+	echo "current file version in git $CURRENT_FILE_VERSION_IN_GIT"
 	return 0
 }
 
 while read oldrev newrev refname; do
+	echo "first loop"
 	git diff --name-only $oldrev $newrev |
 	while read file; do
+		echo "second loop"
 		git show $oldrev:$file | GetFileVersion /dev/stdin
+		echo "read 2"
 		git show $newrev:$file | incrementVersionNumber /dev/stdin $CURRENT_FILE_VERSION_IN_GIT || exit 1
 	done
 done
+echo "finished script"

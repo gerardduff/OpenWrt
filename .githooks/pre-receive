@@ -2,7 +2,7 @@
 oldrev=$1
 newrev=$2
 refname=$3
-
+echo "running script" >>hooks.log
 GetFileVersion(){
 	CURRENT_FILE_VERSION_IN_GIT=$($1 | grep "#define VERSION " | sed -nre 's/^[^0-9]*(([0-9]+\.)*[0-9]+).*/\1/p')
 	return 0
